@@ -33,11 +33,11 @@ const getAuthToken = code => {
 };
 
 const createDraftOffer = offerRow => {
-  const [] = offerRow
+  const [] = offerRow;
   return {
-    name: 
-  }
-}
+    name: ""
+  };
+};
 
 app.use(bodyParser.json());
 app.use(express.static("client/build"));
