@@ -1,0 +1,143 @@
+{
+  "additionalServices": {
+    "id": "string"
+  },
+  "afterSalesServices": {
+    "impliedWarranty": {
+      "id": "09f0b4cc-7880-11e9-8f9e-2a86e4085a59"
+    },
+    "returnPolicy": {
+      "id": "09f0b4cc-7880-11e9-8f9e-2a86e4085a59"
+    },
+    "warranty": {
+      "id": "09f0b4cc-7880-11e9-8f9e-2a86e4085a59"
+    }
+  },
+  "attachments": [
+    {
+      "id": "1928302_MANUAL_45d7a0f543e1b0d05e12a1aef5642efe63389a1d419fe9286d0f158044391fdce"
+    }
+  ],
+  "category": {
+    "id": "string"
+  },
+  "compatibilityList": {
+    "type": "MANUAL"
+  },
+  "contact": {
+    "id": "string"
+  },
+  "createdAt": "2019-12-23T07:44:50Z",
+  "delivery": {
+    "additionalInfo": "string",
+    "handlingTime": "PDT12H30M5S",
+    "shipmentDate": "2018-04-01T08:00:00Z",
+    "shippingRates": {
+      "id": "string"
+    }
+  },
+  "description": {
+    "sections": [
+      {
+        "items": [
+          {
+            "type": "string"
+          }
+        ]
+      }
+    ]
+  },
+  "ean": "string",
+  "external": {
+    "id": "AH-129834"
+  },
+  "id": "string",
+  "images": [
+    {
+      "url": "string"
+    }
+  ],
+  "location": {
+    "city": "string",
+    "countryCode": "string",
+    "postCode": "string",
+    "province": "string"
+  },
+  "name": "string",
+  "parameters": [
+    {
+      "id": "string",
+      "rangeValue": {
+        "from": "string",
+        "to": "string"
+      },
+      "values": ["string"],
+      "valuesIds": ["string"]
+    }
+  ],
+  "payments": {
+    "invoice": "string"
+  },
+  "product": {
+    "id": "string"
+  },
+  "promotion": {
+    "bold": true,
+    "departmentPage": true,
+    "emphasized": true,
+    "emphasizedHighlightBoldPackage": true,
+    "highlight": true
+  },
+  "publication": {
+    "duration": "PDT12H30M5S",
+    "endingAt": "2019-12-23T07:44:50Z",
+    "startingAt": "2019-12-23T07:44:50Z",
+    "status": "INACTIVE",
+    "endedBy": "USER",
+    "republish": false
+  },
+  "sellingMode": {
+    "format": "BUY_NOW",
+    "price": {
+      "amount": "123.45",
+      "currency": "PLN"
+    },
+    "minimalPrice": {
+      "amount": "123.45",
+      "currency": "PLN"
+    },
+    "startingPrice": {
+      "amount": "123.45",
+      "currency": "PLN"
+    }
+  },
+  "sizeTable": {
+    "id": "string"
+  },
+  "stock": {
+    "available": 0,
+    "unit": "string"
+  },
+  "tecdocSpecification": {
+    "id": "470b8513-b786-b7b9-9e7e-2f848729cfd6",
+    "items": [
+      {
+        "name": "Wersja TecDoc",
+        "values": ["0319"]
+      }
+    ]
+  },
+  "updatedAt": "2019-12-23T07:44:50Z",
+  "validation": {
+    "errors": [
+      {
+        "code": "string",
+        "details": "string",
+        "message": "string",
+        "path": "string",
+        "userMessage": "string"
+      }
+    ],
+    "validatedAt": "2019-12-23T07:44:50Z"
+  }
+}
