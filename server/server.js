@@ -118,7 +118,11 @@ app.post("/offers", (req, res) => {
     rows
   );
   console.log({
-    allegroDraftOffersPayload: allegroDraftOffersPayload.slice(0, 3)
+    allegroDraftOffersPayload: JSON.stringify(
+      allegroDraftOffersPayload.slice(0, 3),
+      null,
+      "    "
+    )
   });
   res.status(200).json({
     offers

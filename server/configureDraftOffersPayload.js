@@ -43,15 +43,53 @@ function toGlobalTemplateRegExp(value) {
 function transformWithGlobalAssociations(globalAssociations, row, payload) {
   return globalAssociations.reduce((result, currentAssociation) => {
     const { itemMappings, template, path } = currentAssociation;
+
     function getValue(key) {
       const keyIndex = itemMappings.indexOf(key);
       return row[keyIndex];
     }
-    const appliedTemplate = itemMappings.reduce((res, mapping) => {
-      return res.replace(toGlobalTemplateRegExp(mapping), getValue(mapping));
-    }, template);
-    return setPath(path, appliedTemplate, result);
+    if (typeof template === "string") {
+      const appliedTemplate = itemMappings.reduce((res, mapping) => {
+        return res.replace(toGlobalTemplateRegExp(mapping), getValue(mapping));
+      }, template);
+
+      return setPath(path, appliedTemplate, result);
+    }
+    return setPath(
+      path,
+      deepTransformGlobalTemplate(template, itemMappings, getValue),
+      result
+    );
   }, payload);
+}
+
+function deepTransformGlobalTemplate(template, itemMappings, getValue) {
+  function transformObject(obj) {
+    return Object.entries(obj).reduce((res, [key, value]) => {
+      return { ...res, [key]: transformValue(value) };
+    }, {});
+  }
+  function transformArray(arr) {
+    return arr.map(transformValue);
+  }
+  function transformString(str) {
+    return itemMappings.reduce((res, currentKey) => {
+      return res.replace(
+        toGlobalTemplateRegExp(currentKey),
+        getValue(currentKey)
+      );
+    }, str);
+  }
+  function transformValue(value) {
+    if (Array.isArray(value)) {
+      return transformArray(value);
+    }
+    if (typeof value === "object") {
+      return transformObject(value);
+    }
+    return transformString(value);
+  }
+  return transformValue(template);
 }
 function applyValueWithDescriptor(rawValue, descriptor, payload) {
   console.log({ descriptor });
