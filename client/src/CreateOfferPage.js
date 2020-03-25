@@ -4,11 +4,11 @@ import { css, jsx } from "@emotion/core";
 import { useAsyncFn } from "react-use";
 
 import { Input, Button } from "@material-ui/core";
-import { post } from "./api/request";
 
 import { AgGridReact as Grid } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-theme-material.css";
 import "ag-grid-community/dist/styles/ag-grid.css";
+import createOffers from "./api/offer/createOffers";
 
 export default function CreateOfferPage(props) {
   const fileInputRef = useRef();
@@ -39,62 +39,74 @@ export default function CreateOfferPage(props) {
     trigger();
   };
   const [sendState, send] = useAsyncFn(async () => {
-    return post("/offer", {
-      content: state.value
-    });
-  });
+    const { value: offers } = state;
+    console.log({ state, offers });
+    const offersResponse = await createOffers(offers);
+  }, [state]);
   console.log({ state, sendState });
-  if (state.value) {
-    const colDefs = state.value
-      ? state.value[0].map((headerName, index) => ({
-          field: String(index),
-          headerName,
-          editable: true,
-          draggable: true
-        }))
-      : null;
-    const rowData = state.value
-      ? state.value.slice(1).map(row =>
-          row.reduce((acc, value, index) => {
-            return {
-              ...acc,
-              [String(index)]: value
-            };
-          }, {})
-        )
-      : null;
-    console.log({ colDefs, rowData });
+  if (!state.value) {
     return (
-      <>
-        <Button onClick={send}>Stwórz aukcje</Button>
-        <div
-          css={css`
-            height: 100%;
-            width: 100%;
-          `}
-        >
-          <Grid columnDefs={colDefs} rowData={rowData} sty />
-        </div>
-      </>
+      <div
+        css={css`
+          height: 100%;
+          display: flex;
+          padding: 10px;
+          justify-content: center;
+          align-items: center;
+        `}
+      >
+        {state.loading ? (
+          <span>Loading</span>
+        ) : state.error ? (
+          <span>{`Error: ${state.error.message}`}</span>
+        ) : null}
+        <Input type="file" inputRef={fileInputRef} />
+        <Button color="primary" variant="contained" onClick={submit}>
+          Załaduj plik
+        </Button>
+      </div>
     );
   }
+  const colDefs = state.value
+    ? state.value[0].map((headerName, index) => ({
+        field: String(index),
+        headerName,
+        // editable: true,
+        draggable: true
+      }))
+    : null;
+  const rowData = state.value
+    ? state.value.slice(1).map(row =>
+        row.reduce((acc, value, index) => {
+          return {
+            ...acc,
+            [String(index)]: value
+          };
+        }, {})
+      )
+    : null;
+  console.log({ colDefs, rowData });
   return (
     <div
       css={css`
         height: 100%;
         display: flex;
-        padding: 10px;
-        justify-content: center;
-        align-items: center;
+        align-items: flex-start;
+        flex-flow: column;
       `}
     >
-      {state.loading ? (
-        <span>Loading</span>
-      ) : state.error ? (
-        <span>{`Error: ${state.error.message}`}</span>
-      ) : null}
-      <Input type="file" inputRef={fileInputRef} />
-      <Button onClick={submit}>Stwórz akcję</Button>
+      <Button onClick={send} color="primary" variant="contained">
+        Stwórz aukcje
+      </Button>
+      <div
+        css={css`
+          ${"" /* height: 100%; */}
+          flex: 1;
+          width: 100%;
+        `}
+      >
+        <Grid columnDefs={colDefs} rowData={rowData} />
+      </div>
     </div>
   );
 }

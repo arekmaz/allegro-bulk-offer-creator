@@ -4,6 +4,10 @@ const bodyParser = require("body-parser");
 const chromeLauncher = require("chrome-launcher");
 const cors = require("cors");
 const axios = require("axios");
+const fs = require("fs");
+const path = require("path");
+const readConfig = require("./readConfig");
+const configureDraftOffersPayload = require("./configureDraftOffersPayload");
 
 const app = express();
 const {
@@ -14,11 +18,19 @@ const {
   ALLEGRO_OAUTH_CLIENT_SECRET
 } = process.env;
 const development = NODE_ENV === "development";
-const allegroDomain = development
-  ? "https://allegro.pl.allegrosandbox.pl"
-  : "https://allegro.pl";
+const allegroDomain = "https://allegro.pl";
+console.log({ development });
 
+let configuration;
+
+const tokenCacheFile = path.resolve(__dirname, "token-cache");
 let oauthToken;
+try {
+  oauthToken = fs.readFileSync(tokenCacheFile).toString();
+  console.log("token read from cache");
+} catch (e) {
+  console.log("token not cached");
+}
 
 const getAuthToken = code => {
   const getTokenAddress = `${allegroDomain}/auth/oauth/token?grant_type=authorization_code&code=${code}&redirect_uri=${"http://localhost:3333"}${ALLEGRO_OAUTH_REDIRECT_PATH}`;
@@ -63,17 +75,19 @@ app.post("/login", (req, res) => {
 });
 
 app.get(ALLEGRO_OAUTH_REDIRECT_PATH, (req, res) => {
-  console.log("o auth callback", req);
   const {
     query,
     query: { code }
   } = req;
-  oauthToken = code;
-  console.log({ code, query });
 
   getAuthToken(code)
     .then(response => {
-      console.log({ tokenResponse: response });
+      const {
+        data: { access_token }
+      } = response;
+      console.log({ tokenResponse: access_token });
+      oauthToken = access_token;
+      fs.writeFileSync(tokenCacheFile, oauthToken);
     })
     .catch(e => {
       console.log("error", e);
@@ -86,30 +100,29 @@ app.get(ALLEGRO_OAUTH_REDIRECT_PATH, (req, res) => {
     });
 });
 
-app.post("/offer", (req, res) => {
+app.post("/offers", (req, res) => {
+  const { body } = req;
+  const { offers } = body;
+  console.log({ offers });
   if (!oauthToken) {
-    return res.send(
-      500,
-      JSON.stringify({
-        status: "error",
-        message: "Użytkownik nie jest zalogowany"
-      })
-    );
+    return res.status(401).json({
+      status: "error",
+      message: "Użytkownik nie jest zalogowany"
+    });
   }
-  const {
-    body: { content }
-  } = req;
-  console.log({ content });
-  const [head, ...rows] = content
-    .split(/\r?\n/)
-    .map(rawRow => rawRow.split(/[;,]/));
+  const [head, ...rows] = offers;
+  configuration = configuration || readConfig();
 
-  res.send(
-    200,
-    JSON.stringify({
-      parsed: rows
-    })
+  const allegroDraftOffersPayload = configureDraftOffersPayload(
+    configuration,
+    rows
   );
+  console.log({
+    allegroDraftOffersPayload: allegroDraftOffersPayload.slice(0, 3)
+  });
+  res.status(200).json({
+    offers
+  });
 });
 
 app.get("/test", (req, res) => {

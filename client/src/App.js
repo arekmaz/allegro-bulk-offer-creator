@@ -13,9 +13,7 @@ const {
   NODE_ENV
 } = process.env;
 const development = NODE_ENV === "development";
-const allegroDomain = development
-  ? "https://allegro.pl.allegrosandbox.pl"
-  : "https://allegro.pl";
+const allegroDomain = "https://allegro.pl";
 
 function App() {
   const onSubmit = async e => {

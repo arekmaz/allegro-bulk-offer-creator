@@ -1,2 +1,6 @@
-/node_modules
+node_modules
+*.log
 .env
+config.js
+config.json
+.DS_Store
