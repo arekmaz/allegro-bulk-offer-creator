@@ -42,7 +42,7 @@ function toGlobalTemplateRegExp(value) {
 }
 function transformWithGlobalAssociations(globalAssociations, row, payload) {
   return globalAssociations.reduce((result, currentAssociation) => {
-    const { itemMappings, template, path } = currentAssociation;
+    const { itemMappings, template, path, merge = false } = currentAssociation;
 
     function getValue(key) {
       const keyIndex = itemMappings.indexOf(key);
@@ -55,11 +55,17 @@ function transformWithGlobalAssociations(globalAssociations, row, payload) {
 
       return setPath(path, appliedTemplate, result);
     }
-    return setPath(
-      path,
-      deepTransformGlobalTemplate(template, itemMappings, getValue),
-      result
+    const appliedTemplate = deepTransformGlobalTemplate(
+      template,
+      itemMappings,
+      getValue
     );
+
+    if (merge) {
+      return Object.assign(result, appliedTemplate);
+    }
+
+    return setPath(path, appliedTemplate, result);
   }, payload);
 }
 
